@@ -7,3 +7,4 @@ Anonymize all events marked as "private" in an ICS feed and re-publish the resul
 ## TODO
 - customize label for private events
 - anonymize location
+- private events should still be marked as PRIVATE
