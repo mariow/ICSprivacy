@@ -24,7 +24,7 @@ Anonymize all events marked as "private" in an ICS feed and re-publish the resul
   - in IAM modify that role to have access to your target S3 bucket 
 
 ## TODO
-[x] customize label for private events
-[x] anonymize location
-[ ] private events should still be marked as PRIVATE
-[x] error handling
+- [x] customize label for private events
+- [x] anonymize location
+- [ ] private events should still be marked as PRIVATE
+- [x] error handling
