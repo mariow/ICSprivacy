@@ -1,5 +1,8 @@
 # ICSprivacy
-Anonymize all events marked as "private" in an ICS feed and re-publish the resulting feed (AWS Lambda + S3)
+
+Yet another script to filter an ICS feed and remove all details from events marked as "private". I know, there's lots of existing scripts but I found none that really fixed my small issue (the usual excuse).
+
+The script is designed to run as an AWS lambda function that regularly pulls a calendar feed via HTTP (e.g. from Google calendar), removes all details from events marked as private ("CLASS:PRIVATE") and republishes the resulting feed to an S3 bucket.
 
 ## Prerequisites
 - python
@@ -14,6 +17,7 @@ Anonymize all events marked as "private" in an ICS feed and re-publish the resul
 - Set up lambda function:
   - Create a new lambda function with the option "author from scratch". Choose a helpful name and select the python runtime that matches your local setup (```ls venv/lib/``` ;) ), create a new role and note the name of that role
   - upload lambda_package.zip 
+  - under General configuration set the timeout to a much higher value than the default 3s; I use 2 minutes which is usually way too much
   - under Configuration > Environment variables set the following fields to configure the script:
     - BUCKET_NAME: name of the target bucket where the filtered calendar feed should be uploaded
     - OUTPUT_KEY: filename of the resulting, filtered calendar feed
@@ -23,8 +27,3 @@ Anonymize all events marked as "private" in an ICS feed and re-publish the resul
   - add a trigger to run the script periodically (e.g. Amazon Eventbridge "rate 1h" to run in hourly)
   - in IAM modify that role to have access to your target S3 bucket 
 
-## TODO
-- [x] customize label for private events
-- [x] anonymize location
-- [ ] private events should still be marked as PRIVATE
-- [x] error handling
