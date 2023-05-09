@@ -29,9 +29,10 @@ def filter_private_events(ics_data):
             new_event = deepcopy(event)
 
             if private_event:
-                # Replace summary and description for private events
-                new_event["SUMMARY"] = "private event"
-                new_event["DESCRIPTION"] = "private event"
+                # Replace summary and description for private events, remove location
+                new_event["SUMMARY"] = os.getenv("PRIVATE_SUMMARY", "private event")
+                new_event["DESCRIPTION"] = os.getenv("PRIVATE_DESC", "private event - details removed")
+                new_event["LOCATION"] = ""
 
             # Add the (possibly modified) event to the filtered calendar
             filtered_cal.add_component(new_event)
@@ -40,20 +41,25 @@ def filter_private_events(ics_data):
 
 
 def lambda_handler(event, context):
-    s3 = boto3.client("s3")
     bucket_name = os.environ["BUCKET_NAME"]
     output_key = os.environ["OUTPUT_KEY"]
     source_url = os.environ["SOURCE_URL"]
 
+    if not bucket_name:
+        raise ValueError("Missing required environment variable: BUCKET_NAME")
+    if not output_key:
+        raise ValueError("Missing required environment variable: OUTPUT_KEY")
+    if not source_url:
+        raise ValueError("Missing required environment variable: SOURCE_URL")
+
     # Fetch iCalendar file via HTTP
-    print(f"yolo")
     response = requests.get(source_url)
-    print(response)
     ics_data = response.text
 
     # Filter private events
     filtered_data = filter_private_events(ics_data)
 
     # Write the filtered iCalendar data to S3
+    s3 = boto3.client("s3")
     s3.put_object(Body=filtered_data, Bucket=bucket_name, Key=output_key)
 
