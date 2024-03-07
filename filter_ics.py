@@ -2,7 +2,7 @@ import boto3
 import os
 import requests
 from icalendar import Calendar, Event
-
+import datetime
 from copy import deepcopy
 
 def filter_private_events(ics_data):
@@ -33,6 +33,14 @@ def filter_private_events(ics_data):
                 new_event["SUMMARY"] = os.getenv("PRIVATE_SUMMARY", "private event")
                 new_event["DESCRIPTION"] = os.getenv("PRIVATE_DESC", "private event - details removed")
                 new_event["LOCATION"] = ""
+
+            # filter old entries (older than 365 days)
+            old = datetime.date.today() - datetime.timedelta(days=365)
+            new = datetime.date(new_event.decoded('dtstart').year, new_event.decoded('dtstart').month, new_event.decoded('dtstart').day)
+            
+            if (new < old):
+                print(f"Event UID: {new_event.get('UID')} is older than 365 days (start was {str(new)}), skipping")
+                continue
 
             # Add the (possibly modified) event to the filtered calendar
             filtered_cal.add_component(new_event)
