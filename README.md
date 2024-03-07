@@ -1,6 +1,6 @@
 # ICSprivacy
 
-Yet another script to filter an ICS feed and remove all details from events marked as "private". I know, there's lots of existing scripts but I found none that really fixed my small issue (the usual excuse).
+Yet another script to filter an ICS feed and remove all details from events marked as "private". I know, there's lots of existing scripts but I found none that really scratched my itch (the usual excuse).
 
 The script is designed to run as an AWS lambda function that regularly pulls a calendar feed via HTTP (e.g. from Google calendar), removes all details from events marked as private ("CLASS:PRIVATE") and republishes the resulting feed to an S3 bucket. Entries older than 365 days are removed.
 
