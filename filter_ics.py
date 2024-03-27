@@ -69,5 +69,5 @@ def lambda_handler(event, context):
 
     # Write the filtered iCalendar data to S3
     s3 = boto3.client("s3")
-    s3.put_object(Body=filtered_data, Bucket=bucket_name, Key=output_key)
+    s3.put_object(Body=filtered_data, Bucket=bucket_name, Key=output_key, ContentType='text/calendar')
 
